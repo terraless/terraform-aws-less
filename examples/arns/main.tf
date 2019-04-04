@@ -4,7 +4,8 @@ provider "aws" {
 }
 
 module "arns" {
-  source = "../../modules//arns"
+  source     = "../../modules//arns"
+  s3_buckets = ["*"]
 }
 
 output "iam_root" {
@@ -13,4 +14,8 @@ output "iam_root" {
 
 output "caller_identity" {
   value = "${module.arns.caller_identity}"
+}
+
+output "s3_buckets" {
+  value = "${module.arns.s3_buckets}"
 }
