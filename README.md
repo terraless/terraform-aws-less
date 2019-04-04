@@ -1,3 +1,3 @@
 # terraform-aws-less
 
-You need less terraform modules.
+Less is needed to provision in AWS.

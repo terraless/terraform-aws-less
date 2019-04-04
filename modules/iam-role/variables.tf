@@ -4,5 +4,5 @@ variable "name" {
 
 variable "trusted_aws_identifiers" {
   description = "Trusted AWS identifiers"
-  type        = "list"
+  default     = []
 }
