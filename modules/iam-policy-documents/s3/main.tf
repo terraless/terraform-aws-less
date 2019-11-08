@@ -4,12 +4,12 @@ variable "s3_buckets" {
 }
 
 module "arns_this" {
-  source     = "../arns"
+  source     = "../../arns"
   s3_buckets = var.s3_buckets
 }
 
 module "arns_all" {
-  source     = "../arns"
+  source     = "../../arns"
   s3_buckets = ["*"]
 }
 

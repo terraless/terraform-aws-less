@@ -1,3 +1,8 @@
+variable "firehose_delivery_streams" {
+  description = "Firehose delivery streams"
+  default     = []
+}
+
 variable "iam_groups" {
   description = "IAM group names"
   default     = []
@@ -15,6 +20,11 @@ variable "iam_users" {
 
 variable "kms_keys" {
   description = "KMS key IDs"
+  default     = []
+}
+
+variable "route53_zones" {
+  description = "Route53 hosted zones"
   default     = []
 }
 
