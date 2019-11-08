@@ -1,6 +1,6 @@
 variable "buckets" {
   description = "S3 buckets"
-  type        = "list"
+  type        = list(string)
 }
 
 variable "allow_full_access_iam_roles" {
@@ -16,19 +16,19 @@ variable "allow_full_access_iam_users" {
 module "arns" {
   source = "../arns"
 
-  iam_roles = "${var.allow_full_access_iam_roles}"
-  iam_users = "${var.allow_full_access_iam_users}"
+  iam_roles = var.allow_full_access_iam_roles
+  iam_users = var.allow_full_access_iam_users
 }
 
 module "iam_policy_documents" {
   source     = "../iam-policy-documents"
-  s3_buckets = "${var.buckets}"
+  s3_buckets = var.buckets
 }
 
 resource "aws_s3_bucket" "this" {
-  count = "${length(var.buckets)}"
+  count = length(var.buckets)
 
-  bucket = "${var.buckets[count.index]}"
+  bucket = var.buckets[count.index]
   acl    = "private"
 
   versioning {
@@ -45,9 +45,9 @@ resource "aws_s3_bucket" "this" {
 }
 
 resource "aws_s3_bucket_public_access_block" "this" {
-  count = "${length(var.buckets)}"
+  count = length(var.buckets)
 
-  bucket = "${aws_s3_bucket.this.*.bucket[count.index]}"
+  bucket = aws_s3_bucket.this[count.index].bucket
 
   block_public_acls       = true
   block_public_policy     = true
@@ -56,24 +56,25 @@ resource "aws_s3_bucket_public_access_block" "this" {
 }
 
 resource "aws_iam_role_policy" "s3_buckets" {
-  count = "${length(var.allow_full_access_iam_roles)}"
+  count = length(var.allow_full_access_iam_roles)
 
   name = "s3-buckets-${md5(module.iam_policy_documents.s3_bucket_full_access)}"
-  role = "${var.allow_full_access_iam_roles[count.index]}"
+  role = var.allow_full_access_iam_roles[count.index]
 
-  policy = "${module.iam_policy_documents.s3_bucket_full_access}"
+  policy = module.iam_policy_documents.s3_bucket_full_access
 }
 
 resource "aws_iam_user_policy" "s3_buckets" {
-  count = "${length(var.allow_full_access_iam_users)}"
+  count = length(var.allow_full_access_iam_users)
 
   name = "s3-buckets-${md5(module.iam_policy_documents.s3_bucket_full_access)}"
-  user = "${var.allow_full_access_iam_users[count.index]}"
+  user = var.allow_full_access_iam_users[count.index]
 
-  policy = "${module.iam_policy_documents.s3_bucket_full_access}"
+  policy = module.iam_policy_documents.s3_bucket_full_access
 }
 
 output "buckets" {
   description = "S3 buckets"
-  value       = "${aws_s3_bucket.this.*.bucket}"
+  value       = aws_s3_bucket.this.*.bucket
 }
+

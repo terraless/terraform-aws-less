@@ -1,5 +1,5 @@
-locals = {
-  trusted_aws_identifiers = "${distinct(concat(var.trusted_aws_identifiers, list(module.arns.iam_root)))}"
+locals {
+  trusted_aws_identifiers = distinct(concat(var.trusted_aws_identifiers, [module.arns.iam_root]))
 }
 
 module "arns" {
@@ -7,11 +7,11 @@ module "arns" {
 }
 
 resource "aws_iam_role" "role" {
-  count = "${var.role_name == "" ? 0 : 1}"
+  count = var.role_name == "" ? 0 : 1
 
-  name = "${var.role_name}"
+  name = var.role_name
 
-  assume_role_policy = "${data.aws_iam_policy_document.assume_role.json}"
+  assume_role_policy = data.aws_iam_policy_document.assume_role.json
 }
 
 data "aws_iam_policy_document" "assume_role" {
@@ -20,9 +20,9 @@ data "aws_iam_policy_document" "assume_role" {
       "sts:AssumeRole",
     ]
 
-    principals = {
+    principals {
       type        = "AWS"
-      identifiers = ["${local.trusted_aws_identifiers}"]
+      identifiers = local.trusted_aws_identifiers
     }
   }
 }
@@ -33,26 +33,26 @@ data "aws_iam_policy_document" "service_assume_role" {
       "sts:AssumeRole",
     ]
 
-    principals = {
+    principals {
       type        = "Service"
-      identifiers = ["${var.trusted_identity_providers}"]
+      identifiers = var.trusted_identity_providers
     }
   }
 }
 
 resource "aws_iam_role" "service" {
-  count = "${var.service_role == "" ? 0 : 1}"
+  count = var.service_role == "" ? 0 : 1
 
-  name               = "${var.service_role}"
-  assume_role_policy = "${data.aws_iam_policy_document.service_assume_role.json}"
+  name               = var.service_role
+  assume_role_policy = data.aws_iam_policy_document.service_assume_role.json
 }
 
 output "role" {
   description = "IAM role name"
-  value       = "${aws_iam_role.role.*.name}"
+  value       = aws_iam_role.role.*.name
 }
 
 output "service" {
   description = "IAM role for service"
-  value       = "${aws_iam_role.service.*.name}"
+  value       = aws_iam_role.service.*.name
 }
