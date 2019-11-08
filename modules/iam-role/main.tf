@@ -1,5 +1,5 @@
 locals {
-  trusted_aws_identifiers = distinct(concat(var.trusted_aws_identifiers, [module.arns.iam_root]))
+  trusted_aws_identifiers = distinct(concat(var.trusted_aws_identifiers, [module.arns.iam_root_arn]))
 }
 
 module "arns" {
