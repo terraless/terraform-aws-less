@@ -10,12 +10,22 @@ output "firehose_delivery_stream_arns" {
 
 output "iam_group_arns" {
   description = "IAM group ARNs"
-  value       = data.aws_iam_group.this.*.arn
+  value = formatlist(
+    local.global_format,
+    "iam",
+    "group/",
+    var.iam_groups,
+  )
 }
 
 output "iam_role_arns" {
   description = "IAM role ARNs"
-  value       = data.aws_iam_role.this.*.arn
+  value = formatlist(
+    local.global_format,
+    "iam",
+    "group/",
+    var.iam_roles,
+  )
 }
 
 output "iam_root_arn" {
@@ -25,7 +35,12 @@ output "iam_root_arn" {
 
 output "iam_user_arns" {
   description = "IAM user ARNs"
-  value       = data.aws_iam_user.this.*.arn
+  value = formatlist(
+    local.global_format,
+    "iam",
+    "user/",
+    var.iam_users,
+  )
 }
 
 output "kms_key_arns" {
@@ -67,4 +82,3 @@ output "route53_all_change_arn" {
   description = "Route53 all change ARN"
   value       = format(local.global_format, "route53", "change/", "*")
 }
-

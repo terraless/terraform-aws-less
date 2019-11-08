@@ -21,8 +21,8 @@ module "arns" {
 }
 
 module "iam_policy_documents" {
-  source     = "../iam-policy-documents"
-  s3_buckets = var.buckets
+  source  = "../iam-policy-documents/s3"
+  buckets = var.buckets
 }
 
 resource "aws_s3_bucket" "this" {
