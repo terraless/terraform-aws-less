@@ -49,10 +49,10 @@ resource "aws_iam_role" "service" {
 
 output "role" {
   description = "IAM role name"
-  value       = aws_iam_role.role.*.name
+  value       = var.role_name == "" ? "" : aws_iam_role.role[0].name
 }
 
 output "service" {
   description = "IAM role for service"
-  value       = aws_iam_role.service.*.name
+  value       = var.service_role == "" ? "" : aws_iam_role.service[0].name
 }
