@@ -1,20 +1,12 @@
-variable "role_name" {
+variable "name" {
   description = "IAM role name"
   default     = ""
 }
 
-variable "trusted_aws_identifiers" {
-  description = "Trusted AWS identifiers"
-  default     = []
+variable "trusted_entities" {
+  description = "Trusted entities that can assume this role."
+  default = {
+    "AWS" : []
+    "Service" : []
+  }
 }
-
-variable "trusted_identity_providers" {
-  description = "Trusted identity providers"
-  default     = []
-}
-
-variable "service_role" {
-  description = "IAM role for service"
-  default     = ""
-}
-
