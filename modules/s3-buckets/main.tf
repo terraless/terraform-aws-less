@@ -20,7 +20,7 @@ module "arns" {
   iam_users = var.allow_full_access_iam_users
 }
 
-module "iam_policy_documents" {
+module "iam_policy_documents_s3" {
   source  = "../iam-policy-documents/s3"
   buckets = var.buckets
 }
@@ -58,19 +58,19 @@ resource "aws_s3_bucket_public_access_block" "this" {
 resource "aws_iam_role_policy" "s3_buckets" {
   count = length(var.allow_full_access_iam_roles)
 
-  name = "s3-buckets-${md5(module.iam_policy_documents.s3_bucket_full_access)}"
+  name = "s3-buckets-${md5(module.iam_policy_documents_s3.full_access_json)}"
   role = var.allow_full_access_iam_roles[count.index]
 
-  policy = module.iam_policy_documents.s3_bucket_full_access
+  policy = module.iam_policy_documents_s3.full_access_json
 }
 
 resource "aws_iam_user_policy" "s3_buckets" {
   count = length(var.allow_full_access_iam_users)
 
-  name = "s3-buckets-${md5(module.iam_policy_documents.s3_bucket_full_access)}"
+  name = "s3-buckets-${md5(module.iam_policy_documents_s3.full_access_json)}"
   user = var.allow_full_access_iam_users[count.index]
 
-  policy = module.iam_policy_documents.s3_bucket_full_access
+  policy = module.iam_policy_documents_s3.full_access_json
 }
 
 output "buckets" {
