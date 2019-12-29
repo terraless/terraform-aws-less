@@ -2,7 +2,9 @@ variable "ssh_public_key_path" {
   default = "~/.ssh/id_rsa.pub"
 }
 
-variable "ami" {}
+variable "ami" {
+  default = ""
+}
 
 variable "instance_type" {
   default = "t2.micro"
@@ -12,18 +14,30 @@ locals {
   label_id = "terraform-${formatdate("YYYY-MM-DD", timestamp())}"
 }
 
+data "aws_ami" "ubuntu" {
+  most_recent = true
+
+  filter {
+    name   = "name"
+    values = ["ubuntu/images/hvm-ssd/ubuntu-bionic-18.04-amd64-server-*"]
+  }
+
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
+
+  owners = ["099720109477"] # Canonical
+}
+
 resource "aws_instance" "this" {
-  ami           = var.ami
+  ami           = coalesce(var.ami, data.aws_ami.ubuntu.id)
   instance_type = var.instance_type
 
   key_name = aws_key_pair.this.key_name
   security_groups = [
     aws_security_group.allow_ssh.name
   ]
-
-  tag {
-    Name = "terraform-quickstart"
-  }
 }
 
 resource "aws_key_pair" "this" {
