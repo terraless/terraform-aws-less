@@ -11,7 +11,7 @@ variable "instance_type" {
 }
 
 locals {
-  label_id = "terraform-${formatdate("YYYY-MM-DD", timestamp())}"
+  name_prefix = "terraless-"
 }
 
 data "aws_ami" "ubuntu" {
@@ -41,12 +41,12 @@ resource "aws_instance" "this" {
 }
 
 resource "aws_key_pair" "this" {
-  key_name   = local.label_id
+  key_name_prefix   = local.name_prefix
   public_key = file(var.ssh_public_key_path)
 }
 
 resource "aws_security_group" "allow_ssh" {
-  name        = local.label_id
+  name_prefix        = local.name_prefix
   description = "Allow SSH inbound traffic"
 
   ingress {
