@@ -10,8 +10,8 @@ variable "instance_type" {
   default = "t2.micro"
 }
 
-locals {
-  name_prefix = "terraless-"
+variable "name" {
+  default = "terraless"
 }
 
 data "aws_ami" "ubuntu" {
@@ -38,6 +38,14 @@ resource "aws_instance" "this" {
   security_groups = [
     aws_security_group.allow_ssh.name
   ]
+
+  tags = {
+    Name = var.name
+  }
+}
+
+locals {
+  name_prefix = "${var.name}-"
 }
 
 resource "aws_key_pair" "this" {
